@@ -1,0 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+
+.myClass {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  gap: 2.5rem; // Tailwind gap-10 corresponds to 2.5rem (10 x 0.25rem)
+  overflow: scroll;
+  padding: 3rem; // Tailwind p-12 corresponds to 3rem (12 x 0.25rem)
+}
+
+.dropIndicator {
+  margin-top: 0.125rem; // my-0.5
+  margin-bottom: 0.125rem; // my-0.5
+  height: 0.125rem; // h-0.5
+  width: 100%; // w-full
+  background-color: #01374a; // bg-violet-400
+  opacity: 0; // opacity-0
+}
+
+.fullScreenBackground {
+  height: 100vh; // h-screen
+  width: 100vw; // w-full
+  background-color: #111827; // bg-neutral-900
+  color: #f9fafb; // text-neutral-50
+  background-image: url("/bg.jpeg");
+  background-size: cover; /* Ensures the image covers the entire element */
+  background-position: center; /* Centers the background image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+}
+
+.container {
+  width: 26rem;
+  height: max-content;
+  min-height: 100%;
+  flex-shrink: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 35px 35px 27px 27px;
+  .header {
+    padding: 0px 15px 0px 15px; // mb-3 is 0.75rem
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #01374a;
+    border-radius: 27px 27px 0 0;
+
+    h3 {
+      font-family: "Inter", sans-serif;
+      font-weight: bold; // inter-bold
+      font-size: 1.4rem;
+    }
+
+    .count {
+      font-family: "Inter", sans-serif;
+      font-weight: bold;// inter-bold
+      font-size: 1.4rem;
+    }
+  }
+
+  .content {
+    min-height: 100vh;
+    height: inherit;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem; // space-y-1 is 0.25rem;
+    transition: background-color 0.2s;
+
+    &.active {
+      background-color: rgba(31, 41, 55, 0.5); // bg-neutral-800/50
+    }
+
+    &.inactive {
+      background-color: rgba(31, 41, 55, 0); // bg-neutral-800/0
+    }
+  }
+}
+
+.navBar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}

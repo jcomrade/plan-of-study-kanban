@@ -1,0 +1,28 @@
+.container {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: row-reverse;
+    .image {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+    .details {
+        width: 20%;
+        margin-right: 0.5rem;
+        display: grid;
+        align-content: center;
+        .name {
+            text-overflow: ellipsis ellipsis;
+            text-align: right;
+            font-family: "Inter", sans-serif;
+            color: aliceblue;
+            font-weight: bold;
+        }
+        .id {
+            text-align: right;
+            color: aliceblue;
+            font-style: italic;
+        }
+    }
+}
