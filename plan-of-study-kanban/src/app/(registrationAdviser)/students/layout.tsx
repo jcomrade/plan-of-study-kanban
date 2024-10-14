@@ -10,11 +10,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body style={{ margin: 0 }}>
+      <div style={{ margin: 0 }}>
         <ProfileTab />
         {children}
-      </body>
-    </html>
+      </div>
   );
 }

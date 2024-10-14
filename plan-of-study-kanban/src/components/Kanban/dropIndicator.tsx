@@ -1,4 +1,4 @@
-import styles from "../../styles/global.module.scss";
+import styles from "@/styles/global.module.scss";
 
 export const DropIndicator = ({ beforeId, column }) => {
     return (

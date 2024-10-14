@@ -12,5 +12,4 @@ export const CustomKanban = () => {
   );
 };
 
-
 export default CustomKanban;

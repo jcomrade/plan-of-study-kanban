@@ -1,8 +1,8 @@
 import { useState } from "react";
 import DropIndicator from "./dropIndicator";
-import Card from "./card";
+import StudentCard from "./card";
 import AddCard from "./addCard";
-import styles from "../../styles/global.module.scss";
+import styles from "@/styles/global.module.scss";
 
 export const Column = ({ title, headingColor, cards, column, setCards }) => {
   const [active, setActive] = useState(false);
@@ -123,7 +123,7 @@ export const Column = ({ title, headingColor, cards, column, setCards }) => {
         }`}
       >
         {filteredCards.map((c) => {
-          return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
+          return <StudentCard key={c.id} {...c} handleDragStart={handleDragStart} />;
         })}
         <DropIndicator beforeId={null} column={column} />
         <AddCard column={column} setCards={setCards} />

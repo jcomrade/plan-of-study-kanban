@@ -9,25 +9,35 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-amplify/adapter-nextjs": "^1.2.21",
+    "@aws-amplify/ui-react": "^6.5.3",
     "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^5.16.6",
     "@mui/material-nextjs": "^5.16.6",
+    "aws-amplify": "^6.6.4",
     "axios": "^1.7.2",
     "framer-motion": "^11.3.29",
-    "next": "14.2.5",
+    "next": "^14.2.15",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.3.0",
     "sass": "^1.77.8"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.4.0",
+    "@aws-amplify/backend-cli": "^1.2.9",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "aws-cdk": "^2.162.1",
+    "aws-cdk-lib": "^2.162.1",
+    "constructs": "^10.4.1",
+    "esbuild": "^0.24.0",
     "eslint": "^8",
     "eslint-config-next": "^0.2.4",
-    "typescript": "^5"
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
   }
 }

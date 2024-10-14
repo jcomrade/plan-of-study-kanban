@@ -29,6 +29,13 @@
   background-repeat: no-repeat; /* Prevents the image from repeating */
 }
 
+.fullScreenColor{
+  background-color: #01374a;
+  height: 100vh; // h-screen
+  width: 100vw; // w-full
+  margin: 0;
+}
+
 .container {
   width: 26rem;
   height: max-content;
