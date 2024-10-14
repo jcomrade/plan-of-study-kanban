@@ -4,7 +4,7 @@ import Board from "@/components/Kanban/board";
 //Styles
 import styles from "@/styles/global.module.scss";
 
-export const CustomKanban = () => {
+const CustomKanban = () => {
   return (
     <div className={styles.fullScreenBackground}>
       <Board />
