@@ -1,4 +1,4 @@
-export default function ForgotPassword() {
-    return <h1>ForgotPassword</h1>;
+export default async function ForgotPassword() {
+  return <h1>ForgotPassword</h1>;
   }
   

@@ -29,7 +29,7 @@
   background-repeat: no-repeat; /* Prevents the image from repeating */
 }
 
-.fullScreenColor{
+.fullScreenColor {
   background-color: #01374a;
   height: 100vh; // h-screen
   width: 100vw; // w-full
@@ -51,16 +51,29 @@
     background-color: #01374a;
     border-radius: 27px 27px 0 0;
 
-    h3 {
-      font-family: "Inter", sans-serif;
-      font-weight: bold; // inter-bold
-      font-size: 1.4rem;
+    .title {
+      padding: 0;
+      margin-top: 1.2rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      h3 {
+        margin: 0%;
+        font-family: "Inter", sans-serif;
+        font-weight: bold; // inter-bold
+        font-size: 1.4rem;
+      }
     }
 
     .count {
       font-family: "Inter", sans-serif;
-      font-weight: bold;// inter-bold
+      font-weight: bold; // inter-bold
       font-size: 1.4rem;
+    }
+    .hideButton {
+      font-family: "Inter", sans-serif;
+      font-weight: bold; // inter-bold
+      font-size: 3rem;
     }
   }
 
@@ -84,9 +97,49 @@
   }
 }
 
+.hiddenColumn {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  max-width: 2rem;
+  height: max-content;
+  min-height: 100vh;
+  border: 3px solid #ffffff; // Adds a smooth white border on hover
+  border-radius: 20rem;
+  .expandIcon {
+    z-index: 100;
+    position: absolute;
+    .icon {
+      border-radius: 30px;
+      background-color: #01374a;
+      font-size: 50px;
+      padding: 5px;
+      border: 3px solid #ffffff;
+    }
+  }
+  .line {
+    border-radius: 2rem;
+    min-width: 10px;
+    min-height: 100vh;
+    background-color: #01374a;
+  }
+}
+
 .navBar {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-bottom: 0.5rem;
+}
+
+.homeLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  h1 {
+    color: #ffffff;
+  }
 }

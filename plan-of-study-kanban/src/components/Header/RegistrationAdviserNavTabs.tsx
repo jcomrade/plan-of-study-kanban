@@ -92,9 +92,9 @@ export default function NavTabs() {
         aria-label="nav tabs example"
         role="navigation"
       >
-        <LinkTab label="Your Plan" href="/studyplan/plan" />
-        <LinkTab label="Draft" href="/studyplan/draft" />
-        <LinkTab label="Curriculum" href="/studyplan/curriculum" />
+        <LinkTab label="Student Studyplan" href={`/student/${params.student_number}/plan`} />
+        <LinkTab label="Student Draft" href={`/student/${params.student_number}/draft`} />
+        <LinkTab label="Student Curriculum" href={`/student/${params.student_number}/curriculum`} />
       </Tabs>
     </Box>
   );

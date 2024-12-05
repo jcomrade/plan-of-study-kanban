@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import { FiPlus } from "react-icons/fi";
 
-export const AddCard = ({ column, setCards }) => {
-  const [text, setText] = useState("");
-  const [adding, setAdding] = useState(false);
+interface AddCardProps {
+  column: number;
+  setCards: React.Dispatch<React.SetStateAction<Array<{ column: number; title: string; id: string }>>>;
+}
 
-  const handleSubmit = (e: any) => {
+export const AddCard: React.FC<AddCardProps> = ({ column, setCards }) => {
+  const [text, setText] = useState<string>("");
+  const [adding, setAdding] = useState<boolean>(false);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!text.trim().length) return;
@@ -17,23 +22,28 @@ export const AddCard = ({ column, setCards }) => {
       id: Math.random().toString(),
     };
 
-    setCards((pv) => [...pv, newCard]);
-
+    setCards((prevCards) => [...prevCards, newCard]);
     setAdding(false);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
   };
 
   return (
     <>
-      {adding ? (
+      {/* {adding ? (
         <motion.form layout onSubmit={handleSubmit}>
           <textarea
-            onChange={(e) => setText(e.target.value)}
+            onChange={handleChange}
+            value={text}
             autoFocus
             placeholder="Add new task..."
             className="w-full rounded border border-violet-400 bg-violet-400/20 p-3 text-sm text-neutral-50 placeholder-violet-300 focus:outline-0"
           />
           <div className="mt-1.5 flex items-center justify-end gap-1.5">
             <button
+              type="button"
               onClick={() => setAdding(false)}
               className="px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-50"
             >
@@ -51,12 +61,13 @@ export const AddCard = ({ column, setCards }) => {
       ) : (
         <motion.button
           layout
+          onClick={() => setAdding(true)}
           className="flex w-full items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 transition-colors hover:text-neutral-50"
         >
           <span>Add card</span>
           <FiPlus />
         </motion.button>
-      )}
+      )} */}
     </>
   );
 };

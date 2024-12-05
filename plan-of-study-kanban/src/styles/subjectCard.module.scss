@@ -81,5 +81,239 @@
         }
       }
     }
+    .passedItem {
+      cursor: grab;// rounded
+      background-color: #78cc5d; // bg-neutral-800
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
+
+      &:active {
+        cursor: grabbing; // active:cursor-grabbing
+      }
+  
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.6rem; // p-1
+        background-color: #404040;
+  
+        .title {
+          height: fit-content;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // text-sm
+          letter-spacing: 0.05em; // tracking-wider
+          display: flex;
+          align-items: center; 
+        }
+  
+        .units {
+          height: fit-content;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // inter-bold
+          display: flex;
+          align-items: center; 
+        }
+      }
+  
+      .content {
+        padding: 0.5rem; // p-2
+        padding-bottom: 0; // pb-0
+        margin-bottom: 20px;
+        
+        .titleText {
+          margin: 0rem;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // text-sm
+          letter-spacing: 0.05em; // tracking-wider
+          color: #404040;; // text-neutral-100
+        }
+      }
+      .error{
+        padding: 0.5rem;
+        margin: 0.5rem;
+        border-radius: 0.5rem;
+        font-family: 'Inter', sans-serif;
+        font-style: italic;
+        color: #ffffff;
+        background-color: #ad3d3d;
+        div {
+          padding: 0rem;
+        }
+      }
+      .footer {
+        padding: 0.5rem; // p-2
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+  
+        .icon,
+        .status {
+          margin: 0;
+          font-family: 'Inter', sans-serif;
+          font-style: italic;
+          font-size: 0.9rem; // text-xs
+          color: #000000; // text-neutral-100
+        }
+      }
+    }
+    .failedItem {
+      cursor: grab;// rounded
+      background-color: #e08b8b; // bg-neutral-800
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
+
+      &:active {
+        cursor: grabbing; // active:cursor-grabbing
+      }
+  
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.6rem; // p-1
+        background-color: #404040;
+  
+        .title {
+          height: fit-content;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // text-sm
+          letter-spacing: 0.05em; // tracking-wider
+          display: flex;
+          align-items: center; 
+        }
+  
+        .units {
+          height: fit-content;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // inter-bold
+          display: flex;
+          align-items: center; 
+        }
+      }
+  
+      .content {
+        padding: 0.5rem; // p-2
+        padding-bottom: 0; // pb-0
+        margin-bottom: 20px;
+        
+        .titleText {
+          margin: 0rem;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // text-sm
+          letter-spacing: 0.05em; // tracking-wider
+          color: #404040;; // text-neutral-100
+        }
+      }
+      .error{
+        padding: 0.5rem;
+        margin: 0.5rem;
+        border-radius: 0.5rem;
+        font-family: 'Inter', sans-serif;
+        font-style: italic;
+        color: #ffffff;
+        background-color: #ad3d3d;
+        div {
+          padding: 0rem;
+        }
+      }
+      .footer {
+        padding: 0.5rem; // p-2
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+  
+        .icon,
+        .status {
+          margin: 0;
+          font-family: 'Inter', sans-serif;
+          font-style: italic;
+          font-size: 0.9rem; // text-xs
+          color: #000000; // text-neutral-100
+        }
+      }
+    }
+    .futureItem {
+      cursor: grab;// rounded
+      background-color: #d1d1d1; // bg-neutral-800
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
+
+      &:active {
+        cursor: grabbing; // active:cursor-grabbing
+      }
+  
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.6rem; // p-1
+        background-color: #404040;
+  
+        .title {
+          height: fit-content;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // text-sm
+          letter-spacing: 0.05em; // tracking-wider
+          display: flex;
+          align-items: center; 
+        }
+  
+        .units {
+          height: fit-content;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // inter-bold
+          display: flex;
+          align-items: center; 
+        }
+      }
+  
+      .content {
+        padding: 0.5rem; // p-2
+        padding-bottom: 0; // pb-0
+        margin-bottom: 20px;
+        
+        .titleText {
+          margin: 0rem;
+          font-family: 'Inter', sans-serif;
+          font-weight: bold; // inter-bold
+          font-size: 1rem; // text-sm
+          letter-spacing: 0.05em; // tracking-wider
+          color: #404040;; // text-neutral-100
+        }
+      }
+      .error{
+        padding: 0.5rem;
+        margin: 0.5rem;
+        border-radius: 0.5rem;
+        font-family: 'Inter', sans-serif;
+        font-style: italic;
+        color: #ffffff;
+        background-color: #ad3d3d;
+        div {
+          padding: 0rem;
+        }
+      }
+      .footer {
+        padding: 0.5rem; // p-2
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+  
+        .icon,
+        .status {
+          margin: 0;
+          font-family: 'Inter', sans-serif;
+          font-style: italic;
+          font-size: 0.9rem; // text-xs
+          color: #000000; // text-neutral-100
+        }
+      }
+    }
   }
   

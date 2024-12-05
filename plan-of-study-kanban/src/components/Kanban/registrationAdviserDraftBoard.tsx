@@ -2,6 +2,32 @@ import { useEffect, useState } from "react";
 import Column from "./column";
 import styles from "@/styles/global.module.scss";
 import { generateAcademicYears } from "@/utils/generateAcademicyears";
+import { green } from "@mui/material/colors";
+import { getCookie } from "typescript-cookie";
+
+type Subject = {
+  preRequisite: string[];
+  courseCode: string;
+  column: number;
+  id: string;
+  units: number;
+  courseDescription: string;
+  coRequisite: string[];
+  status: string;
+};
+
+type StudentData = {
+  PK: string;
+  subjects: Subject[];
+  SK: string;
+  draftStatus: string;
+  current_semester: string;
+};
+
+type StudentDataProps = {
+  data: StudentData;
+  editable: boolean;
+};
 
 // Find the column of a given course code (either prerequisite or co-requisite)
 const findSubjectColumn = (courseCode: string, subjects: any) => {
@@ -13,32 +39,58 @@ const findSubjectColumn = (courseCode: string, subjects: any) => {
   return subject ? subject.column : -1;
 };
 
-type Subject = {
-  preRequisite: string[];
-  courseCode: string;
-  column: number;
-  id: string;
-  units: number;
-  courseDescription: string;
-  message: string;
-  coRequisite: string[];
-  status: string;
+const submitDraft = async (
+  subjectList: any,
+  status: any,
+  studentData: any,
+  draftResponse: any
+) => {
+  let subjects = subjectList;
+  const idToken = getCookie("id_token");
+  console.log({
+    PK: studentData.PK,
+    SK: studentData.SK,
+    subjects: subjects,
+    draftStatus: status,
+    draft_response: draftResponse,
+  });
+  const filteredSubjects = subjects.map(
+    ({ error, ...subject }: any) => subject
+  );
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/draft/registrationAdviser?student_number=${studentData.PK}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${idToken}`,
+        },
+        body: JSON.stringify({
+          PK: studentData.PK,
+          SK: studentData.SK,
+          subjects: filteredSubjects,
+          draftStatus: status,
+          draft_response: draftResponse,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return subjectList;
+  }
 };
 
-type StudentData = {
-  PK: string;
-  subjects: Subject[];
-  SK: string;
-};
-
-type StudentDataProps = {
-  data: StudentData;
-  editable: boolean;
-};
-
-export const Board = () => {
+export const Board: React.FC<StudentDataProps> = ({ data, editable }) => {
   const [subjectCards, setSubjectCards] = useState(
-    DEFAULT_CARDS.subjects.map((subject: any, _, self) => {
+    data.subjects.map((subject: any, _, self) => {
       const { courseCode, column, preRequisite, coRequisite } = subject;
 
       // If no prerequisites or co-requisites, no error
@@ -67,7 +119,8 @@ export const Board = () => {
       if (invalidPreReqs.length > 0) {
         errorMessage = (
           <div>
-            Error: <strong>{courseCode}</strong> is scheduled in an earlier or same semester as its prerequisite(s):{" "}
+            Error: <strong>{courseCode}</strong> is scheduled in an earlier or
+            same semester as its prerequisite(s):{" "}
             <strong>{invalidPreReqs.join(", ")}</strong>.
           </div>
         );
@@ -77,7 +130,8 @@ export const Board = () => {
         errorMessage = (
           <div>
             {errorMessage}
-            Error: <strong>{courseCode}</strong> must be scheduled in the same semester as its co-requisite(s):{" "}
+            Error: <strong>{courseCode}</strong> must be scheduled in the same
+            semester as its co-requisite(s):{" "}
             <strong>{invalidCoReqs.join(", ")}</strong>.
           </div>
         );
@@ -86,9 +140,12 @@ export const Board = () => {
       return { ...subject, error: errorMessage };
     })
   );
-
+  const [studentProperties, setStudentProperties] = useState({
+    PK: data.PK,
+    SK: data.SK,
+  });
+  const [draftStatus, setDraftStatus] = useState(data.draftStatus);
   const [studentData, setStudentData] = useState(DEFAULT_CARDS.student);
-
   // Function to validate subject columns
   const validateSubjectColumns = (subjects: any) => {
     const updatedSubjects = subjects.map((subject: any) => {
@@ -120,7 +177,8 @@ export const Board = () => {
       if (invalidPreReqs.length > 0) {
         errorMessage = (
           <div>
-            Error: <strong>{courseCode}</strong> is scheduled in an earlier or same semester as its prerequisite(s):{" "}
+            Error: <strong>{courseCode}</strong> is scheduled in an earlier or
+            same semester as its prerequisite(s):{" "}
             <strong>{invalidPreReqs.join(", ")}</strong>.
           </div>
         );
@@ -130,7 +188,8 @@ export const Board = () => {
         errorMessage = (
           <div>
             {errorMessage}
-            Error: <strong>{courseCode}</strong> must be scheduled in the same semester as its co-requisite(s):{" "}
+            Error: <strong>{courseCode}</strong> must be scheduled in the same
+            semester as its co-requisite(s):{" "}
             <strong>{invalidCoReqs.join(", ")}</strong>.
           </div>
         );
@@ -143,22 +202,114 @@ export const Board = () => {
   };
 
   return (
-    <div className={styles.myClass}>
-      {generateAcademicYears(studentData.maximumResidency).map(
-        (semester, index) => {
-          return (
-            <Column
-              key={index}
-              title={semester}
-              column={index}
-              headingColor="text-neutral-500"
-              cards={subjectCards}
-              setCards={validateSubjectColumns} // Pass the setter so child components can trigger updates
-            />
-          );
-        }
+    <>
+      <div className={styles.myClass}>
+        {generateAcademicYears(studentData.maximumResidency).map(
+          (semester, index) => {
+            return (
+              <Column
+                key={index}
+                currentSemester={data.current_semester}
+                title={semester}
+                column={index}
+                headingColor="text-neutral-500"
+                cards={subjectCards}
+                setCards={validateSubjectColumns} // Pass the setter so child components can trigger updates
+              />
+            );
+          }
+        )}
+      </div>
+      {draftStatus == "draft_for_approval" ? (
+        <div>
+          <button
+            style={{
+              padding: 10,
+              backgroundColor: "green",
+              fontSize: 30,
+              marginLeft: 1000,
+            }}
+            onClick={async () => {
+              const newDraft = await submitDraft(
+                subjectCards,
+                draftStatus,
+                studentProperties,
+                "accept"
+              );
+              console.log(newDraft);
+              setDraftStatus(newDraft.draftStatus);
+              setSubjectCards(subjectCards);
+            }}
+          >
+            Accept Draft Changes
+          </button>
+          <button
+            style={{
+              padding: 10,
+              backgroundColor: "red",
+              fontSize: 30,
+              marginLeft: 1000,
+            }}
+            onClick={async () => {
+              const newDraft = await submitDraft(
+                subjectCards,
+                draftStatus,
+                studentProperties,
+                "decline"
+              );
+              console.log(newDraft);
+              setDraftStatus(newDraft.draftStatus);
+              setSubjectCards(subjectCards);
+            }}
+          >
+            Decline Draft Changes
+          </button>
+        </div>
+      ) : (
+        <div>
+          <button
+            style={{
+              padding: 10,
+              backgroundColor: "green",
+              fontSize: 30,
+              marginLeft: 1000,
+            }}
+            onClick={async () => {
+              switch (draftStatus) {
+                case "granted_authorization":
+                  return;
+                default:
+                  break;
+              }
+              const newDraft = await submitDraft(
+                subjectCards,
+                draftStatus,
+                studentProperties,
+                ""
+              );
+              console.log(newDraft);
+              setDraftStatus(newDraft.draftStatus);
+              setSubjectCards(subjectCards);
+            }}
+          >
+            {(function (status) {
+              switch (status) {
+                case "unauthorized":
+                  return "GRANT PERMISSION";
+                case "requesting_authorization":
+                  return "Authorize";
+                case "granted_authorization":
+                  return "Draft Ongoing...";
+                case "draft_for_approval":
+                  return "Approve Draft";
+                default:
+                  return "Unknown";
+              }
+            })(draftStatus)}
+          </button>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
@@ -210,7 +361,8 @@ const DEFAULT_CARDS = {
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "Discrete Mathematical Structures in Computer Science I",
+      courseDescription:
+        "Discrete Mathematical Structures in Computer Science I",
       id: "5",
       column: 0,
       units: 3,
@@ -230,7 +382,8 @@ const DEFAULT_CARDS = {
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "CWTS DHK - National Service Training Program-Civic Welfare Training Service 1",
+      courseDescription:
+        "CWTS DHK - National Service Training Program-Civic Welfare Training Service 1",
       id: "7",
       column: 0,
       units: 3,
@@ -280,7 +433,8 @@ const DEFAULT_CARDS = {
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "Discrete Mathematical Structures in Computer Science II",
+      courseDescription:
+        "Discrete Mathematical Structures in Computer Science II",
       id: "12",
       column: 1,
       units: 3,
@@ -310,7 +464,8 @@ const DEFAULT_CARDS = {
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "CWTS DHK - National Service Training Program-Civic Welfare Training Service 2",
+      courseDescription:
+        "CWTS DHK - National Service Training Program-Civic Welfare Training Service 2",
       id: "16",
       column: 1,
       units: 3,
@@ -325,17 +480,18 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "MATH 27",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["MATH 26"],
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "Computer Organization & Architecture with Assembly Language Programming",
+      courseDescription:
+        "Computer Organization & Architecture with Assembly Language Programming",
       id: "18",
       column: 3,
       units: 3,
       courseCode: "CMSC 133",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["CMSC 18", "CMSC 130"],
       coRequisite: [], // Now an array
     },
@@ -345,7 +501,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "CMSC 122",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["CMSC 18", "CMSC 57"],
       coRequisite: [], // Now an array
     },
@@ -355,7 +511,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "AMAT 131",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["STAT 1"],
       coRequisite: [], // Now an array
     },
@@ -365,7 +521,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "PE 3",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: [],
       coRequisite: [], // Now an array
     },
@@ -375,7 +531,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "GE 2",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: [],
       coRequisite: ["GE 3"], // Now an array
     },
@@ -385,7 +541,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "GE 3",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["PE 2"],
       coRequisite: ["GE 2"], // Now an array
     },

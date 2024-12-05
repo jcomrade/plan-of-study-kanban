@@ -1,3 +1,4 @@
+import NavTabs from "@/components/Header/RegistrationAdviserNavTabs";
 import ProfileTab from "@/components/Header/ProfileTab";
 export const metadata = {
   title: "Next.js",

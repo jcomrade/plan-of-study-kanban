@@ -1,17 +1,9 @@
 import { useEffect, useState } from "react";
-import Column from "./column";
+import Column from "./unEditableColumn";
 import styles from "@/styles/global.module.scss";
 import { generateAcademicYears } from "@/utils/generateAcademicyears";
-
-// Find the column of a given course code (either prerequisite or co-requisite)
-const findSubjectColumn = (courseCode: string, subjects: any) => {
-  const subject = subjects.find(
-    (subj: any) =>
-      subj.courseCode === courseCode &&
-      !(subj.status == "Passed" || subj.status == "Failed")
-  );
-  return subject ? subject.column : -1;
-};
+import { green } from "@mui/material/colors";
+import { getCookie } from "typescript-cookie";
 
 type Subject = {
   preRequisite: string[];
@@ -20,7 +12,6 @@ type Subject = {
   id: string;
   units: number;
   courseDescription: string;
-  message: string;
   coRequisite: string[];
   status: string;
 };
@@ -29,6 +20,7 @@ type StudentData = {
   PK: string;
   subjects: Subject[];
   SK: string;
+  draftStatus: string;
 };
 
 type StudentDataProps = {
@@ -36,9 +28,15 @@ type StudentDataProps = {
   editable: boolean;
 };
 
-export const Board = () => {
+// Find the column of a given course code (either prerequisite or co-requisite)
+const findSubjectColumn = (courseCode: string, subjects: any) => {
+  const subject = subjects.find((subj: any) => subj.courseCode === courseCode);
+  return subject ? subject.column : -1;
+};
+
+export const Board: React.FC<StudentDataProps> = ({ data, editable }) => {
   const [subjectCards, setSubjectCards] = useState(
-    DEFAULT_CARDS.subjects.map((subject: any, _, self) => {
+    data.subjects.map((subject: any, _, self) => {
       const { courseCode, column, preRequisite, coRequisite } = subject;
 
       // If no prerequisites or co-requisites, no error
@@ -67,7 +65,8 @@ export const Board = () => {
       if (invalidPreReqs.length > 0) {
         errorMessage = (
           <div>
-            Error: <strong>{courseCode}</strong> is scheduled in an earlier or same semester as its prerequisite(s):{" "}
+            Error: <strong>{courseCode}</strong> is scheduled in an earlier or
+            same semester as its prerequisite(s):{" "}
             <strong>{invalidPreReqs.join(", ")}</strong>.
           </div>
         );
@@ -77,7 +76,8 @@ export const Board = () => {
         errorMessage = (
           <div>
             {errorMessage}
-            Error: <strong>{courseCode}</strong> must be scheduled in the same semester as its co-requisite(s):{" "}
+            Error: <strong>{courseCode}</strong> must be scheduled in the same
+            semester as its co-requisite(s):{" "}
             <strong>{invalidCoReqs.join(", ")}</strong>.
           </div>
         );
@@ -86,9 +86,12 @@ export const Board = () => {
       return { ...subject, error: errorMessage };
     })
   );
-
+  const [studentProperties, setStudentProperties] = useState({
+    PK: data.PK,
+    SK: data.SK,
+  });
+  const [draftStatus, setDraftStatus] = useState(data.draftStatus);
   const [studentData, setStudentData] = useState(DEFAULT_CARDS.student);
-
   // Function to validate subject columns
   const validateSubjectColumns = (subjects: any) => {
     const updatedSubjects = subjects.map((subject: any) => {
@@ -120,7 +123,8 @@ export const Board = () => {
       if (invalidPreReqs.length > 0) {
         errorMessage = (
           <div>
-            Error: <strong>{courseCode}</strong> is scheduled in an earlier or same semester as its prerequisite(s):{" "}
+            Error: <strong>{courseCode}</strong> is scheduled in an earlier or
+            same semester as its prerequisite(s):{" "}
             <strong>{invalidPreReqs.join(", ")}</strong>.
           </div>
         );
@@ -130,7 +134,8 @@ export const Board = () => {
         errorMessage = (
           <div>
             {errorMessage}
-            Error: <strong>{courseCode}</strong> must be scheduled in the same semester as its co-requisite(s):{" "}
+            Error: <strong>{courseCode}</strong> must be scheduled in the same
+            semester as its co-requisite(s):{" "}
             <strong>{invalidCoReqs.join(", ")}</strong>.
           </div>
         );
@@ -143,22 +148,23 @@ export const Board = () => {
   };
 
   return (
-    <div className={styles.myClass}>
-      {generateAcademicYears(studentData.maximumResidency).map(
-        (semester, index) => {
-          return (
-            <Column
-              key={index}
-              title={semester}
-              column={index}
-              headingColor="text-neutral-500"
-              cards={subjectCards}
-              setCards={validateSubjectColumns} // Pass the setter so child components can trigger updates
-            />
-          );
-        }
-      )}
-    </div>
+    <>
+      <div className={styles.myClass}>
+        {generateAcademicYears(studentData.maximumResidency).map(
+          (semester, index) => {
+            return (
+              <Column
+                key={index}
+                title={semester}
+                column={index}
+                headingColor="text-neutral-500"
+                cards={subjectCards}
+              />
+            );
+          }
+        )}
+      </div>
+    </>
   );
 };
 
@@ -210,7 +216,8 @@ const DEFAULT_CARDS = {
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "Discrete Mathematical Structures in Computer Science I",
+      courseDescription:
+        "Discrete Mathematical Structures in Computer Science I",
       id: "5",
       column: 0,
       units: 3,
@@ -230,7 +237,8 @@ const DEFAULT_CARDS = {
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "CWTS DHK - National Service Training Program-Civic Welfare Training Service 1",
+      courseDescription:
+        "CWTS DHK - National Service Training Program-Civic Welfare Training Service 1",
       id: "7",
       column: 0,
       units: 3,
@@ -280,7 +288,8 @@ const DEFAULT_CARDS = {
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "Discrete Mathematical Structures in Computer Science II",
+      courseDescription:
+        "Discrete Mathematical Structures in Computer Science II",
       id: "12",
       column: 1,
       units: 3,
@@ -310,7 +319,8 @@ const DEFAULT_CARDS = {
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "CWTS DHK - National Service Training Program-Civic Welfare Training Service 2",
+      courseDescription:
+        "CWTS DHK - National Service Training Program-Civic Welfare Training Service 2",
       id: "16",
       column: 1,
       units: 3,
@@ -325,17 +335,18 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "MATH 27",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["MATH 26"],
       coRequisite: [], // Now an array
     },
     {
-      courseDescription: "Computer Organization & Architecture with Assembly Language Programming",
+      courseDescription:
+        "Computer Organization & Architecture with Assembly Language Programming",
       id: "18",
       column: 3,
       units: 3,
       courseCode: "CMSC 133",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["CMSC 18", "CMSC 130"],
       coRequisite: [], // Now an array
     },
@@ -345,7 +356,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "CMSC 122",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["CMSC 18", "CMSC 57"],
       coRequisite: [], // Now an array
     },
@@ -355,7 +366,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "AMAT 131",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["STAT 1"],
       coRequisite: [], // Now an array
     },
@@ -365,7 +376,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "PE 3",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: [],
       coRequisite: [], // Now an array
     },
@@ -375,7 +386,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "GE 2",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: [],
       coRequisite: ["GE 3"], // Now an array
     },
@@ -385,7 +396,7 @@ const DEFAULT_CARDS = {
       column: 3,
       units: 3,
       courseCode: "GE 3",
-      status: "Ongoing",
+      status: "Passed",
       preRequisite: ["PE 2"],
       coRequisite: ["GE 2"], // Now an array
     },

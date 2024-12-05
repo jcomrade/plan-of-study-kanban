@@ -1,18 +1,26 @@
 import { useState } from "react";
 import DropIndicator from "./dropIndicator";
-import StudentCard from "./card";
+import SubjectCard from "./card";
 import AddCard from "./addCard";
 import styles from "@/styles/global.module.scss";
+import { IconContext } from "react-icons";
+import { RiExpandRightFill } from "react-icons/ri";
 
-export const Column = ({ title, headingColor, cards, column, setCards }) => {
+export const Column = ({
+  title,
+  headingColor,
+  currentSemester,
+  cards,
+  column,
+  setCards,
+}: any) => {
   const [active, setActive] = useState(false);
-
-  const handleDragStart = (e, card) => {
-    console.log("card :", card);
+  const [hideColumn, setHideColumn] = useState(false);
+  const handleDragStart = (e: any, card: any) => {
     e.dataTransfer.setData("cardId", card.id);
   };
 
-  const handleDragEnd = (e) => {
+  const handleDragEnd = (e: any) => {
     const cardId = e.dataTransfer.getData("cardId");
     setActive(false);
     clearHighlights();
@@ -27,8 +35,19 @@ export const Column = ({ title, headingColor, cards, column, setCards }) => {
 
       let cardToTransfer = copy.find((c) => c.id === cardId);
       if (!cardToTransfer) return;
-      cardToTransfer = { ...cardToTransfer, column };
-
+      cardToTransfer = {
+        ...cardToTransfer,
+        column,
+        status:
+          title == currentSemester &&
+          !(cardToTransfer.status == "Passed") &&
+          !(cardToTransfer.status == "Failed")
+            ? "Ongoing"
+            : cardToTransfer.status == "Passed" ||
+              cardToTransfer.status == "Failed"
+            ? cardToTransfer.status
+            : "Future",
+      };
       copy = copy.filter((c) => c.id !== cardId);
 
       const moveToBack = before === "-1";
@@ -41,27 +60,26 @@ export const Column = ({ title, headingColor, cards, column, setCards }) => {
 
         copy.splice(insertAtIndex, 0, cardToTransfer);
       }
-      console.log(copy);
       setCards(copy);
     }
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: any) => {
     e.preventDefault();
     highlightIndicator(e);
 
     setActive(true);
   };
 
-  const clearHighlights = (els) => {
+  const clearHighlights = (els: any) => {
     const indicators = els || getIndicators();
 
-    indicators.forEach((i) => {
+    indicators.forEach((i: any) => {
       i.style.opacity = "0";
     });
   };
 
-  const highlightIndicator = (e) => {
+  const highlightIndicator = (e: any) => {
     const indicators = getIndicators();
 
     clearHighlights(indicators);
@@ -71,7 +89,7 @@ export const Column = ({ title, headingColor, cards, column, setCards }) => {
     el.element.style.opacity = "1";
   };
 
-  const getNearestIndicator = (e, indicators) => {
+  const getNearestIndicator = (e: any, indicators: any) => {
     const DISTANCE_OFFSET = 50;
 
     const el = indicators.reduce(
@@ -100,19 +118,30 @@ export const Column = ({ title, headingColor, cards, column, setCards }) => {
   };
 
   const handleDragLeave = () => {
-    clearHighlights();
+    clearHighlights(false);
     setActive(false);
   };
 
-  const filteredCards = cards.filter((c) => c.column === column);
+  const filteredCards = cards.filter((c: any) => c.column == column);
 
-  const subjectsUnitsSum = filteredCards.reduce((sum, c) => sum + c.units, 0); // Sum up the units of the filtered cards
-
-  return (
+  const subjectsUnitsSum = filteredCards.reduce(
+    (sum: any, c: any) => sum + c.units,
+    0
+  ); // Sum up the units of the filtered cards
+  return !hideColumn ? (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3>{title}</h3>
+        <div className={styles.title}>
+          <h3>{title}</h3>
+          {title == currentSemester && <h3>(Ongoing Semester)</h3>}
+        </div>
         <span className={styles.count}>{subjectsUnitsSum} u</span>
+        <span
+          onMouseDown={() => setHideColumn(true)}
+          className={styles.hideButton}
+        >
+          -
+        </span>
       </div>
       <div
         onDrop={handleDragEnd}
@@ -122,12 +151,44 @@ export const Column = ({ title, headingColor, cards, column, setCards }) => {
           active ? styles.active : styles.inactive
         }`}
       >
-        {filteredCards.map((c) => {
-          return <StudentCard key={c.id} {...c} handleDragStart={handleDragStart} />;
+        {filteredCards.map((c: any, index: any) => {
+          const card = {
+            ...c,
+            status:
+              title == currentSemester &&
+              !(c.status == "Passed") &&
+              !(c.status == "Failed")
+                ? "Ongoing"
+                : c.status == "Passed" || c.status == "Failed"
+                ? c.status
+                : "Future",
+          };
+          return (
+            <SubjectCard
+              key={`${c.courseCode}${c.message ? c.message : ""}`}
+              {...card}
+              draggable={
+                c.status == "Failed" || c.status == "Passed" ? false : true
+              }
+              handleDragStart={handleDragStart}
+            />
+          );
         })}
         <DropIndicator beforeId={null} column={column} />
         <AddCard column={column} setCards={setCards} />
       </div>
+    </div>
+  ) : (
+    <div className={styles.hiddenColumn}>
+      <div
+        className={styles.expandIcon}
+        onMouseDown={() => setHideColumn(false)}
+      >
+        <IconContext.Provider value={{ className: styles.icon }}>
+          <RiExpandRightFill />
+        </IconContext.Provider>
+      </div>
+      <div className={styles.line}></div>
     </div>
   );
 };
